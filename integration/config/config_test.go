@@ -136,6 +136,20 @@ func TestConfigsCreateAndDelete(t *testing.T) {
 
 	insp, _, err = client.ConfigInspectWithRaw(ctx, configID)
 	testutil.ErrorContains(t, err, "No such config")
+
+	// This test case is ported from the original TestConfigCreateWithLabels
+	testName = "test_config_with_labels"
+	configID = createConfig(ctx, t, client, testName, []byte("TESTINGDATA"), map[string]string{
+		"key1": "value1",
+		"key2": "value2",
+	})
+
+	insp, _, err = client.ConfigInspectWithRaw(ctx, configID)
+	require.NoError(t, err)
+	assert.Equal(t, insp.Spec.Name, testName)
+	assert.Equal(t, len(insp.Spec.Labels), 2)
+	assert.Equal(t, insp.Spec.Labels["key1"], "value1")
+	assert.Equal(t, insp.Spec.Labels["key2"], "value2")
 }
 
 func TestConfigsUpdate(t *testing.T) {

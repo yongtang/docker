@@ -12,45 +12,6 @@ import (
 	"github.com/go-check/check"
 )
 
-func (s *DockerSwarmSuite) TestConfigCreate(c *check.C) {
-	d := s.AddDaemon(c, true, true)
-
-	testName := "test_config"
-	id := d.CreateConfig(c, swarm.ConfigSpec{
-		Annotations: swarm.Annotations{
-			Name: testName,
-		},
-		Data: []byte("TESTINGDATA"),
-	})
-	c.Assert(id, checker.Not(checker.Equals), "", check.Commentf("configs: %s", id))
-
-	config := d.GetConfig(c, id)
-	c.Assert(config.Spec.Name, checker.Equals, testName)
-}
-
-func (s *DockerSwarmSuite) TestConfigCreateWithLabels(c *check.C) {
-	d := s.AddDaemon(c, true, true)
-
-	testName := "test_config"
-	id := d.CreateConfig(c, swarm.ConfigSpec{
-		Annotations: swarm.Annotations{
-			Name: testName,
-			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
-			},
-		},
-		Data: []byte("TESTINGDATA"),
-	})
-	c.Assert(id, checker.Not(checker.Equals), "", check.Commentf("configs: %s", id))
-
-	config := d.GetConfig(c, id)
-	c.Assert(config.Spec.Name, checker.Equals, testName)
-	c.Assert(len(config.Spec.Labels), checker.Equals, 2)
-	c.Assert(config.Spec.Labels["key1"], checker.Equals, "value1")
-	c.Assert(config.Spec.Labels["key2"], checker.Equals, "value2")
-}
-
 // Test case for 28884
 func (s *DockerSwarmSuite) TestConfigCreateResolve(c *check.C) {
 	d := s.AddDaemon(c, true, true)
