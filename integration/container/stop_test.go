@@ -49,7 +49,7 @@ func TestDeleteDevicemapper(t *testing.T) {
 	client := request.NewAPIClient(t)
 	ctx := context.Background()
 
-	id := container.Run(t, ctx, client, container.WithName("foo"), container.WithCmd("echo"))
+	id := container.Run(t, ctx, client, container.WithCmd("echo"))
 
 	poll.WaitOn(t, container.IsStopped(ctx, client, id), poll.WithDelay(100*time.Millisecond))
 

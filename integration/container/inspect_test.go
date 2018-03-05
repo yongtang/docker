@@ -22,17 +22,15 @@ func TestInspectCpusetInConfigPre120(t *testing.T) {
 	client := request.NewAPIClient(t, client.WithVersion("1.19"))
 	ctx := context.Background()
 
-	name := "cpusetinconfig-pre120"
 	// Create container with up to-date-API
-	container.Run(t, ctx, request.NewAPIClient(t), container.WithName(name),
-		container.WithCmd("true"),
+	cID := container.Run(t, ctx, request.NewAPIClient(t), container.WithCmd("true"),
 		func(c *container.TestContainerConfig) {
 			c.HostConfig.Resources.CpusetCpus = "0"
 		},
 	)
-	poll.WaitOn(t, container.IsInState(ctx, client, name, "exited"), poll.WithDelay(100*time.Millisecond))
+	poll.WaitOn(t, container.IsInState(ctx, client, cID, "exited"), poll.WithDelay(100*time.Millisecond))
 
-	_, body, err := client.ContainerInspectWithRaw(ctx, name, false)
+	_, body, err := client.ContainerInspectWithRaw(ctx, cID, false)
 	require.NoError(t, err)
 
 	var inspectJSON map[string]interface{}
